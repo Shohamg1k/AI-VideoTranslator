@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pytube
+openai-whisper
+googletrans==4.0.0-rc1
+gtts
+moviepy
+pydub
+ffmpeg-python
+deep_translator
+openai
+whisper
