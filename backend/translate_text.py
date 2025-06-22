@@ -1,30 +1,32 @@
 import requests
 
 def translate_text(text, target_language):
-    url = "http://localhost:5000/translate"  # Use self-hosted LibreTranslate
+    """
+    Translates English text to the specified target language using LibreTranslate.
+    `target_language` should be a code like 'hi', 'fr', 'es', etc.
+    """
+    url = "http://localhost:5000/translate"
     translated_chunks = []
 
-    for i in range(0, len(text), 5000):  # Chunking
+    for i in range(0, len(text), 5000):  # LibreTranslate input limit
         chunk = text[i:i+5000]
-        payload = {"q": chunk, "source": "en", "target": target_language, "format": "text"}
+        payload = {
+            "q": chunk,
+            "source": "en",
+            "target": target_language,
+            "format": "text"
+        }
 
-        response = requests.post(url, json=payload)
-        data = response.json()
-
-        if "translatedText" in data:
-            translated_chunks.append(data["translatedText"])
-        else:
-            print(f"❌ Error: {data}")
+        try:
+            response = requests.post(url, json=payload)
+            data = response.json()
+            if "translatedText" in data:
+                translated_chunks.append(data["translatedText"])
+            else:
+                print("❌ LibreTranslate error:", data)
+                return None
+        except Exception as e:
+            print(f"❌ Failed to connect to LibreTranslate: {e}")
             return None
 
     return " ".join(translated_chunks)
-
-# ✅ **Test**
-if __name__ == "__main__":
-    long_text = "This is a long text for translation." * 100
-    translated_output = translate_text(long_text, "hi")
-    print("Translated Output:", translated_output)
-
-
-
-

@@ -1,21 +1,27 @@
 import os
-from pytube import YouTube
+import yt_dlp
 
 UPLOADS_DIR = "backend/uploads"
 
 def download_youtube_video(youtube_url):
-    """Downloads a YouTube video and saves it to the uploads directory."""
+    """Downloads a YouTube video using yt-dlp."""
     try:
         os.makedirs(UPLOADS_DIR, exist_ok=True)
-        
-        yt = YouTube(youtube_url)
-        stream = yt.streams.filter(progressive=True, file_extension="mp4").first()
 
-        video_path = os.path.join(UPLOADS_DIR, f"{yt.title}.mp4")
-        stream.download(output_path=UPLOADS_DIR, filename=f"{yt.title}.mp4")
+        ydl_opts = {
+            'format': 'best[ext=mp4]/best',
+            'outtmpl': os.path.join(UPLOADS_DIR, '%(title)s.%(ext)s'),
+            'quiet': False
+        }
 
-        print(f"✅ Video downloaded: {video_path}")
-        return video_path
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(youtube_url, download=True)
+            video_title = info_dict.get('title', None)
+            ext = info_dict.get('ext', 'mp4')
+            downloaded_path = os.path.join(UPLOADS_DIR, f"{video_title}.{ext}")
+
+        print(f"✅ Video downloaded: {downloaded_path}")
+        return downloaded_path
     except Exception as e:
         print(f"❌ Error downloading video: {e}")
         return None
