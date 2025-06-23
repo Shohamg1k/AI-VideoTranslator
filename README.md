@@ -85,4 +85,6 @@ Server will start at: `http://127.0.0.1:8000`
 ---
 
 
+python backend/process_video.py --video "C:/Users/shoha/VID_TRANS/AI-VideoTranslator/backend/backend/uploads/I tricked my brain to be ADDICTED to coding..mp4" --lang hi
+
 
